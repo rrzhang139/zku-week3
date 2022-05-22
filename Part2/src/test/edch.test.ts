@@ -7,6 +7,8 @@ import {
   EdDSA
 } from '../index';
 
+jest.setTimeout(30000);
+
 describe('ECDH test', () => {
   let eddsa: EdDSA;
   beforeAll(async () => {
@@ -26,10 +28,12 @@ describe('ECDH test', () => {
     for (let i = 0; i < 5; i++) {
       aliceMessage.push(BigInt(Math.floor(Math.random() * 50)));
     }
+    console.log('message before')
+    console.log(aliceMessage)
     //console.log('plaintext:', aliceMessage);
     // Alice encrypt with her private key and bob pubkey
     const ciphertext = await encrypt(aliceMessage, ecdhSharedKey);
-
+    console.log(ciphertext)
     // decrypting using bob's private key + alice pubkey
     const ecdhbobSharedKey = await genEcdhSharedKey({
       eddsa,
@@ -37,6 +41,8 @@ describe('ECDH test', () => {
       pubKey: alicePubKey,
     });
     const decryptedMessage = await decrypt(ciphertext, ecdhbobSharedKey);
+    console.log('message after encrypt/decrypt')
+    console.log(decryptedMessage)
     expect(decryptedMessage).toStrictEqual(aliceMessage);
   });
 
